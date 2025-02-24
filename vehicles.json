@@ -1,0 +1,131 @@
+[
+  {
+    "id": 1740338942944,
+    "carName": "Kwid",
+    "description": "",
+    "price": "53000",
+    "year": "2023",
+    "model": "2023",
+    "mileage": "1600",
+    "color": "prata",
+    "options": "",
+    "image": "/uploads/1740338942939.jpeg",
+    "brand": "",
+    "images": [
+      "/uploads/1740432614897.jpeg"
+    ]
+  },
+  {
+    "id": 1740340593631,
+    "carName": "Mob",
+    "description": "fsafs",
+    "price": "32000",
+    "year": "2019",
+    "model": "mobi",
+    "mileage": "520",
+    "color": "Prata",
+    "options": "",
+    "image": "/uploads/1740419708437.jpeg",
+    "brand": "",
+    "images": [
+      "/uploads/1740433557341.jpeg"
+    ]
+  },
+  {
+    "id": 1740340605331,
+    "carName": "Fiat",
+    "description": "sfsafa",
+    "price": "18000",
+    "year": "2024",
+    "model": "2024",
+    "mileage": "1600",
+    "color": "Vermelho",
+    "options": "",
+    "image": "/uploads/1740419769809.jpeg",
+    "brand": "",
+    "images": [
+      "/uploads/1740433679012.jpeg"
+    ]
+  },
+  {
+    "id": 1740419949667,
+    "carName": "Fusca",
+    "description": ".",
+    "price": "20000",
+    "year": "1980",
+    "model": "Fusca",
+    "mileage": "150000",
+    "color": "verde",
+    "options": "",
+    "image": "/uploads/1740419949652.jpeg",
+    "brand": ".",
+    "images": [
+      "/uploads/1740433211470.jpeg"
+    ]
+  },
+  {
+    "id": 1740420011078,
+    "carName": "fusca",
+    "description": ".",
+    "price": "32000",
+    "year": "1985",
+    "model": "Fusca",
+    "mileage": "220000",
+    "color": "azul",
+    "options": "",
+    "image": "/uploads/1740420011045.webp",
+    "brand": "",
+    "images": [
+      "/uploads/1740433863131.webp"
+    ]
+  },
+  {
+    "id": 1740428646014,
+    "carName": "Creta",
+    "description": ".",
+    "price": "92.000",
+    "year": "2021",
+    "model": "Creta",
+    "mileage": "11200",
+    "color": "Prata",
+    "options": "",
+    "image": "/uploads/1740428645727.webp",
+    "brand": "",
+    "images": [
+      "/uploads/1740434501121.webp"
+    ]
+  },
+  {
+    "id": 1740428998541,
+    "carName": "C4",
+    "description": ".",
+    "price": "52000",
+    "year": "2020",
+    "model": "C4",
+    "mileage": "25000",
+    "color": "prata",
+    "options": "",
+    "image": "/uploads/1740428998536.jpeg",
+    "brand": "",
+    "images": [
+      "/uploads/1740434515299.jpeg"
+    ]
+  },
+  {
+    "id": 1740431970674,
+    "carName": "carro",
+    "description": ".",
+    "price": "85000",
+    "year": "2022",
+    "brand": "Fiat",
+    "model": "Carro",
+    "mileage": "16000",
+    "color": "Vermelho",
+    "options": "",
+    "images": [
+      "/uploads/1740432651679.jpeg",
+      "/uploads/1740432651679.jpeg",
+      "/uploads/1740432651680.jpeg"
+    ]
+  }
+]
