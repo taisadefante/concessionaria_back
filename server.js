@@ -1,3 +1,5 @@
+require("dotenv").config(); // 🔹 Carrega as variáveis de ambiente do .env
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -5,7 +7,7 @@ const fs = require("fs");
 const vehiclesRoutes = require("./routes/vehicles");
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001; // Agora usa a variável de ambiente
 
 // Middleware
 app.use(express.json());

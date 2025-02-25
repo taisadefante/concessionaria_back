@@ -70,14 +70,17 @@ router.post("/vehicles", upload.array("images", 5), (req, res) => {
       id: Date.now(),
       carName,
       description,
-      price,
-      year,
+      price: parseFloat(price),
+      year: parseInt(year),
       brand,
       model,
-      mileage,
+      mileage: parseInt(mileage),
       color,
       options,
-      images: req.files.map((file) => `/uploads/${file.filename}`) || [],
+      images:
+        req.files.length > 0
+          ? req.files.map((file) => `/uploads/${file.filename}`)
+          : [],
     };
 
     vehicles.push(newVehicle);
@@ -97,13 +100,19 @@ router.put("/vehicles/:id", upload.array("images", 5), (req, res) => {
     const index = vehicles.findIndex((v) => v.id === id);
 
     if (index !== -1) {
+      // Mantém as imagens antigas se nenhuma nova for enviada
+      const updatedImages =
+        req.files.length > 0
+          ? req.files.map((file) => `/uploads/${file.filename}`)
+          : vehicles[index].images;
+
       vehicles[index] = {
         ...vehicles[index],
         ...req.body,
-        images:
-          req.files && req.files.length > 0
-            ? req.files.map((file) => `/uploads/${file.filename}`)
-            : vehicles[index].images,
+        price: parseFloat(req.body.price) || vehicles[index].price,
+        year: parseInt(req.body.year) || vehicles[index].year,
+        mileage: parseInt(req.body.mileage) || vehicles[index].mileage,
+        images: updatedImages,
       };
 
       writeVehicles(vehicles);
