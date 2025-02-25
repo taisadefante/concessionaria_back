@@ -14,15 +14,11 @@ app.use(cors());
 // 📂 Criar a pasta uploads caso não exista
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
-  try {
-    fs.mkdirSync(uploadDir, { recursive: true });
-    console.log("📂 Pasta 'uploads' criada com sucesso.");
-  } catch (err) {
-    console.error("❌ Erro ao criar a pasta 'uploads':", err);
-  }
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("📂 Pasta 'uploads' criada com sucesso.");
 }
 
-// Servindo imagens da pasta uploads corretamente
+// Servindo imagens corretamente
 app.use("/uploads", express.static(uploadDir));
 
 // Usar as rotas da API
