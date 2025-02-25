@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": 1740452227486,
+    "carName": "Creta",
+    "description": "",
+    "price": 92000,
+    "year": 2021,
+    "brand": "hyundai",
+    "model": "Action 1.6",
+    "mileage": 11800,
+    "color": "Prata",
+    "options": "Nenhum",
+    "images": []
+  }
+]

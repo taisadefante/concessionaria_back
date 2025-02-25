@@ -6,19 +6,23 @@ const upload = require("../middleware/upload");
 const router = express.Router();
 const vehiclesFile = path.join(__dirname, "../vehicles.json");
 
-// 🔹 Função para ler os veículos do arquivo JSON
+// 🔹 Criar o arquivo JSON caso não exista
+if (!fs.existsSync(vehiclesFile)) {
+  fs.writeFileSync(vehiclesFile, JSON.stringify([], null, 2), "utf8");
+}
+
+// 🔹 Função para ler os veículos do JSON
 const readVehicles = () => {
   try {
-    if (!fs.existsSync(vehiclesFile)) return [];
     const data = fs.readFileSync(vehiclesFile, "utf8");
-    return JSON.parse(data);
+    return JSON.parse(data) || [];
   } catch (err) {
     console.error("❌ Erro ao ler o arquivo JSON:", err);
     return [];
   }
 };
 
-// 🔹 Função para salvar os veículos no arquivo JSON
+// 🔹 Função para salvar os veículos no JSON
 const writeVehicles = (vehicles) => {
   try {
     fs.writeFileSync(vehiclesFile, JSON.stringify(vehicles, null, 2), "utf8");
@@ -64,27 +68,33 @@ router.post("/vehicles", upload.array("images", 5), (req, res) => {
       options,
     } = req.body;
 
+    if (!carName || !price || !year || !brand || !model) {
+      return res
+        .status(400)
+        .json({ error: "Preencha todos os campos obrigatórios." });
+    }
+
     const vehicles = readVehicles();
 
     const newVehicle = {
       id: Date.now(),
       carName,
       description,
-      price: parseFloat(price),
-      year: parseInt(year),
+      price: parseFloat(price) || 0,
+      year: parseInt(year) || 0,
       brand,
       model,
-      mileage: parseInt(mileage),
+      mileage: parseInt(mileage) || 0,
       color,
-      options,
-      images:
-        req.files.length > 0
-          ? req.files.map((file) => `/uploads/${file.filename}`)
-          : [],
+      options: options || "Nenhum",
+      images: req.files
+        ? req.files.map((file) => `/uploads/${file.filename}`)
+        : [],
     };
 
     vehicles.push(newVehicle);
     writeVehicles(vehicles);
+
     res.status(201).json(newVehicle);
   } catch (error) {
     console.error("❌ Erro ao cadastrar veículo:", error);
@@ -99,27 +109,27 @@ router.put("/vehicles/:id", upload.array("images", 5), (req, res) => {
     const id = parseInt(req.params.id);
     const index = vehicles.findIndex((v) => v.id === id);
 
-    if (index !== -1) {
-      // Mantém as imagens antigas se nenhuma nova for enviada
-      const updatedImages =
-        req.files.length > 0
-          ? req.files.map((file) => `/uploads/${file.filename}`)
-          : vehicles[index].images;
-
-      vehicles[index] = {
-        ...vehicles[index],
-        ...req.body,
-        price: parseFloat(req.body.price) || vehicles[index].price,
-        year: parseInt(req.body.year) || vehicles[index].year,
-        mileage: parseInt(req.body.mileage) || vehicles[index].mileage,
-        images: updatedImages,
-      };
-
-      writeVehicles(vehicles);
-      res.json(vehicles[index]);
-    } else {
-      res.status(404).json({ error: "Veículo não encontrado." });
+    if (index === -1) {
+      return res.status(404).json({ error: "Veículo não encontrado." });
     }
+
+    // 🔹 Mantém as imagens antigas se nenhuma nova for enviada
+    const updatedImages =
+      req.files.length > 0
+        ? req.files.map((file) => `/uploads/${file.filename}`)
+        : vehicles[index].images;
+
+    vehicles[index] = {
+      ...vehicles[index],
+      ...req.body,
+      price: parseFloat(req.body.price) || vehicles[index].price,
+      year: parseInt(req.body.year) || vehicles[index].year,
+      mileage: parseInt(req.body.mileage) || vehicles[index].mileage,
+      images: updatedImages,
+    };
+
+    writeVehicles(vehicles);
+    res.json(vehicles[index]);
   } catch (error) {
     console.error("❌ Erro ao atualizar veículo:", error);
     res.status(500).json({ error: "Erro ao atualizar veículo." });
