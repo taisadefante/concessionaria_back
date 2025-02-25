@@ -7,22 +7,21 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, "../uploads")); // Pasta onde os arquivos serão salvos
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+    cb(null, `${Date.now()}-${file.originalname.replace(/\s+/g, "_")}`);
   },
 });
 
-// Filtros para aceitar apenas imagens
+// 🔹 Permitir imagens de qualquer formato (.webp, .png, .jpg, .jpeg, .gif, etc.)
 const fileFilter = (req, file, cb) => {
-  const allowedMimeTypes = [
-    "image/jpeg",
-    "image/png",
-    "image/gif",
-    "image/webp",
-  ];
-  if (allowedMimeTypes.includes(file.mimetype)) {
+  if (file.mimetype.startsWith("image/")) {
     cb(null, true);
   } else {
-    cb(new Error("Formato de arquivo não suportado!"), false);
+    cb(
+      new Error(
+        "Formato de arquivo não suportado! Apenas imagens são permitidas."
+      ),
+      false
+    );
   }
 };
 
@@ -30,7 +29,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB máximo por imagem
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB máximo por imagem
 });
 
 module.exports = upload;
