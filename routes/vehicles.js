@@ -5,6 +5,7 @@ const upload = require("../middleware/upload");
 
 const router = express.Router();
 const vehiclesFile = path.join(__dirname, "../vehicles.json");
+const uploadDir = path.join(__dirname, "../uploads");
 
 // 🔹 Criar o arquivo JSON caso não exista
 if (!fs.existsSync(vehiclesFile)) {
@@ -35,18 +36,7 @@ const writeVehicles = (vehicles) => {
 router.get("/vehicles", (req, res) => {
   try {
     const vehicles = readVehicles();
-
-    // 🔹 Garante que `images` seja sempre um array
-    const vehiclesWithImages = vehicles.map((vehicle) => ({
-      ...vehicle,
-      images: Array.isArray(vehicle.images)
-        ? vehicle.images
-        : vehicle.images
-        ? [vehicle.images]
-        : [],
-    }));
-
-    res.json(vehiclesWithImages);
+    res.json(vehicles);
   } catch (error) {
     console.error("❌ Erro ao buscar veículos:", error);
     res.status(500).json({ error: "Erro ao buscar veículos." });
@@ -87,9 +77,7 @@ router.post("/vehicles", upload.array("images", 5), (req, res) => {
       mileage: parseInt(mileage) || 0,
       color,
       options: options || "Nenhum",
-      images: req.files
-        ? req.files.map((file) => `/uploads/${file.filename}`)
-        : [],
+      images: req.files.map((file) => `/uploads/${file.filename}`),
     };
 
     vehicles.push(newVehicle);
@@ -113,11 +101,15 @@ router.put("/vehicles/:id", upload.array("images", 5), (req, res) => {
       return res.status(404).json({ error: "Veículo não encontrado." });
     }
 
-    // 🔹 Mantém as imagens antigas se nenhuma nova for enviada
-    const updatedImages =
-      req.files.length > 0
-        ? req.files.map((file) => `/uploads/${file.filename}`)
-        : vehicles[index].images;
+    // 🔹 Deletar imagens antigas se novas forem enviadas
+    if (req.files.length > 0) {
+      vehicles[index].images.forEach((image) => {
+        const imagePath = path.join(__dirname, "..", image);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      });
+    }
 
     vehicles[index] = {
       ...vehicles[index],
@@ -125,7 +117,10 @@ router.put("/vehicles/:id", upload.array("images", 5), (req, res) => {
       price: parseFloat(req.body.price) || vehicles[index].price,
       year: parseInt(req.body.year) || vehicles[index].year,
       mileage: parseInt(req.body.mileage) || vehicles[index].mileage,
-      images: updatedImages,
+      images:
+        req.files.length > 0
+          ? req.files.map((file) => `/uploads/${file.filename}`)
+          : vehicles[index].images,
     };
 
     writeVehicles(vehicles);
@@ -136,7 +131,7 @@ router.put("/vehicles/:id", upload.array("images", 5), (req, res) => {
   }
 });
 
-// 🔹 Excluir um veículo
+// 🔹 Excluir um veículo e suas imagens associadas
 router.delete("/vehicles/:id", (req, res) => {
   try {
     const vehicles = readVehicles();
@@ -147,10 +142,22 @@ router.delete("/vehicles/:id", (req, res) => {
       return res.status(404).json({ error: "Veículo não encontrado." });
     }
 
+    // 🔹 Deletar imagens do veículo da pasta "uploads"
+    vehicles[vehicleIndex].images.forEach((image) => {
+      const imagePath = path.join(__dirname, "..", image);
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+    });
+
+    // 🔹 Remover o veículo do JSON
     const newVehicles = vehicles.filter((v) => v.id !== id);
     writeVehicles(newVehicles);
 
-    res.json({ success: true, message: "Veículo excluído com sucesso." });
+    res.json({
+      success: true,
+      message: "Veículo e imagens excluídos com sucesso.",
+    });
   } catch (error) {
     console.error("❌ Erro ao excluir veículo:", error);
     res.status(500).json({ error: "Erro ao excluir veículo." });
